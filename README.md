@@ -5,13 +5,13 @@ experience, as well as interests.
 
 ## Projects
 
-#### House Hunting - Population Density in Athens
+### House Hunting - Population Density in Athens
 Identifying less densely populated areas in Athens, Greece, using the number of
 schools as a proxy for population density.
 
 ![scatter_map_schools_athens](./house_hunting/scatter_map_schools_athens_gov.png "Scatter Plot")
 
-#### Seoul Rented Bicycle Maintenance
+### Seoul Rented Bicycle Maintenance
 Analyze bike rentals to determine the ideal time for bike maintenance, during
 work days and work hours.
 <br />
