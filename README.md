@@ -2,16 +2,18 @@
 
 Just a collection of projects I have worked on, showcasing relevant skills and
 experience, as well as interests.
+<br />
+See the respective project folder for more details.
 
 ## Projects
 
-### House Hunting - Population Density in Athens
+### [House Hunting - Population Density in Athens](./house_hunting)
 Identifying less densely populated areas in Athens, Greece, using the number of
 schools as a proxy for population density.
 
 ![scatter_map_schools_athens](./house_hunting/scatter_map_schools_athens_gov.png "Scatter Plot")
 
-### Seoul Rented Bicycle Maintenance
+### [Seoul Rented Bicycle Maintenance](./seoul_bike_maintenance)
 Analyze bike rentals to determine the ideal time for bike maintenance, during
 work days and work hours.
 <br />
