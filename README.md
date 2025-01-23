@@ -23,3 +23,9 @@ work days and work hours.
 <br />
 **Overview**:
 ![Overview Image](./seoul_bike_maintenance/written-report-summary.png)
+
+### [Multi-label dataset train/test split](./multi_label_dataset_split)
+Splitting a multi-label dataset into train and test sets, ensuring that all
+labels are represented in both sets, using [scikit-multilearn](http://scikit.ml/).
+<br />
+Used it to find the 10 images to use in a questionaire about human `Perception of Anthropomorphic Traits in Cars`.
