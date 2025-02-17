@@ -29,3 +29,11 @@ Splitting a multi-label dataset into train and test sets, ensuring that all
 labels are represented in both sets, using [scikit-multilearn](http://scikit.ml/).
 <br />
 Used it to find the 10 images to use in a questionaire about human `Perception of Anthropomorphic Traits in Cars`.
+
+### [Customer Clustering](./customer-clustering)
+Using [this customer segmentation dataset](https://www.kaggle.com/datasets/imakash3011/customer-personality-analysis) from Kaggle, I performed a customer segmentation analysis using K-means clustering.
+<br />
+The notebook contains the EDA, data preprocessing, hyperparameter tuning, and
+the final model, as well as a statistical analysis of the clusters and some
+actionable insights.
+
