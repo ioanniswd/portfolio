@@ -4,6 +4,10 @@ Just a collection of projects I have worked on, showcasing relevant skills and
 experience, as well as interests.
 <br />
 See the respective project folder for more details.
+<br />
+<br />
+Also check out my [Blog](https://ioanniswd.github.io/) containing some more
+information on side projects and other topics.
 
 ## Projects
 
