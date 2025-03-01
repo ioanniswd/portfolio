@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.16.4
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: myenv
 #     language: python
-#     name: python3
+#     name: myenv
 # ---
 
 # %%
@@ -108,11 +108,11 @@ def trial_evaluation_metric(y_true, y_pred):
 # %%
 def objective_dt(trial):
     params = {
-            'max_depth': trial.suggest_int('max_depth', 5, 8),
-            # 'max_depth': trial.suggest_int('max_depth', 2, 32),
-            # 'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-            # 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
-            # 'max_features': trial.suggest_categorical('max_features', ['auto', 'sqrt', 'log2']),
+            # 'max_depth': trial.suggest_int('max_depth', 5, 8),
+            'max_depth': trial.suggest_int('max_depth', 2, 32),
+            'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
+            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
+#             'max_features': trial.suggest_categorical('max_features', ['auto', 'sqrt', 'log2']),
             'random_state': random_state
             }
 
@@ -126,12 +126,12 @@ def objective_dt(trial):
 # %%
 def objective_rf(trial):
     params = {
-            'max_depth': trial.suggest_int('max_depth', 3, 5),
-            # 'max_depth': trial.suggest_int('max_depth', 2, 32),
-            # 'n_estimators': trial.suggest_int('n_estimators', 2, 200),
-            # 'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-            # 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
-            # 'max_features': trial.suggest_categorical('max_features', ['auto', 'sqrt', 'log2']),
+            # 'max_depth': trial.suggest_int('max_depth', 3, 5),
+            'max_depth': trial.suggest_int('max_depth', 2, 32),
+            'n_estimators': trial.suggest_int('n_estimators', 2, 200),
+            'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
+            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
+            'max_features': trial.suggest_categorical('max_features', ['sqrt', 'log2']),
             'random_state': random_state,
             'n_jobs': -1
             }
@@ -146,15 +146,15 @@ def objective_rf(trial):
 # %%
 def objective_xgb(trial):
     params = {
-            'max_depth': trial.suggest_int('max_depth', 5, 6),
-            # 'max_depth': trial.suggest_int('max_depth', 2, 32),
-            # 'n_estimators': trial.suggest_int('n_estimators', 2, 200),
-            # 'learning_rate': trial.suggest_loguniform('learning_rate', 0.001, 1),
-            # 'subsample': trial.suggest_discrete_uniform('subsample', 0.5, 1, 0.1),
-            # 'colsample_bytree': trial.suggest_discrete_uniform('colsample_bytree', 0.5, 1, 0.1),
-            # 'gamma': trial.suggest_loguniform('gamma', 0.001, 10),
-            # 'reg_alpha': trial.suggest_loguniform('reg_alpha', 0.001, 10),
-            # 'reg_lambda': trial.suggest_loguniform('reg_lambda', 0.001, 10),
+            # 'max_depth': trial.suggest_int('max_depth', 5, 6),
+            'max_depth': trial.suggest_int('max_depth', 2, 32),
+            'n_estimators': trial.suggest_int('n_estimators', 2, 200),
+            'learning_rate': trial.suggest_loguniform('learning_rate', 0.001, 1),
+            'subsample': trial.suggest_discrete_uniform('subsample', 0.5, 1, 0.1),
+            'colsample_bytree': trial.suggest_discrete_uniform('colsample_bytree', 0.5, 1, 0.1),
+            'gamma': trial.suggest_loguniform('gamma', 0.001, 10),
+            'reg_alpha': trial.suggest_loguniform('reg_alpha', 0.001, 10),
+            'reg_lambda': trial.suggest_loguniform('reg_lambda', 0.001, 10),
             'random_state': random_state,
             'objective': 'binary:logistic',
             'n_jobs': -1
@@ -168,15 +168,13 @@ def objective_xgb(trial):
 
 
 # %%
-# %%time
+dt_study, dt_execution_seconds = run_study(objective_dt, n_trials=50)
 
-dt_study, dt_execution_seconds = run_study(objective_dt, n_trials=3)
-rf_study, rf_execution_seconds = run_study(objective_rf, n_trials=3)
-xgb_study, xgb_execution_seconds = run_study(objective_xgb, n_trials=3)
+# %%
+rf_study, rf_execution_seconds = run_study(objective_rf, n_trials=50)
 
-# dt_study, dt_execution_seconds = run_study(objective_dt, n_trials=100)
-# rf_study, rf_execution_seconds = run_study(objective_rf, n_trials=100)
-# xgb_study, xgb_execution_seconds = run_study(objective_xgb, n_trials=100)
+# %%
+xgb_study, xgb_execution_seconds = run_study(objective_xgb, n_trials=50)
 
 # %%
 # create a df with the results
