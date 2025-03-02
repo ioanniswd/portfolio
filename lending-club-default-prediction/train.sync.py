@@ -41,13 +41,12 @@ import matplotlib.font_manager as fm
 font_path = '/usr/share/fonts/noto_sans_mono/NotoSansMono_SemiCondensed-SemiBold.ttf'
 font_prop = fm.FontProperties(fname=font_path)
 
-sns.set(font=font_prop.get_name())
 mpl.rcParams['font.family'] = font_prop.get_name()
 plt.rcParams["font.weight"] = 'semibold'
 
 bold = 'extra bold'
 
-sns.set_style(style='darkgrid')
+sns.set(font=font_prop.get_name(), style='darkgrid')
 
 # %% [markdown]
 # ## Model
@@ -102,17 +101,17 @@ def run_study(objective, n_trials=50, direction='maximize'):
 
 # %%
 def trial_evaluation_metric(y_true, y_pred):
-    return metrics.fbeta_score(y_true, y_pred, beta=10)
+    # return metrics.fbeta_score(y_true, y_pred, beta=10)
+    return metrics.recall_score(y_true, y_pred)
 
 
 # %%
 def objective_dt(trial):
     params = {
-            # 'max_depth': trial.suggest_int('max_depth', 5, 8),
-            'max_depth': trial.suggest_int('max_depth', 2, 32),
-            'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
-#             'max_features': trial.suggest_categorical('max_features', ['auto', 'sqrt', 'log2']),
+            'max_depth': trial.suggest_int("max_depth", 1, 20),
+            'min_samples_split': trial.suggest_int("min_samples_split", 2, 20),
+            'min_samples_leaf': trial.suggest_int("min_samples_leaf", 1, 20),
+            'criterion': trial.suggest_categorical("criterion", ["gini", "entropy"]),
             'random_state': random_state
             }
 
@@ -126,15 +125,15 @@ def objective_dt(trial):
 # %%
 def objective_rf(trial):
     params = {
-            # 'max_depth': trial.suggest_int('max_depth', 3, 5),
-            'max_depth': trial.suggest_int('max_depth', 2, 32),
-            'n_estimators': trial.suggest_int('n_estimators', 2, 200),
-            'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
-            'max_features': trial.suggest_categorical('max_features', ['sqrt', 'log2']),
-            'random_state': random_state,
-            'n_jobs': -1
+            'n_estimators': trial.suggest_int("n_estimators", 10, 300),
+            'max_depth': trial.suggest_int("max_depth", 1, 30),
+            'min_samples_split': trial.suggest_int("min_samples_split", 2, 20),
+            'min_samples_leaf': trial.suggest_int("min_samples_leaf", 1, 20),
+            'max_features': trial.suggest_categorical("max_features", ["sqrt", "log2", None]),
+            'criterion': trial.suggest_categorical("criterion", ["gini", "entropy"]),
+            'random_state': random_state
             }
+
 
     model = RandomForestClassifier(**params)
     model.fit(X_train, y_train)
@@ -146,18 +145,15 @@ def objective_rf(trial):
 # %%
 def objective_xgb(trial):
     params = {
-            # 'max_depth': trial.suggest_int('max_depth', 5, 6),
-            'max_depth': trial.suggest_int('max_depth', 2, 32),
-            'n_estimators': trial.suggest_int('n_estimators', 2, 200),
-            'learning_rate': trial.suggest_loguniform('learning_rate', 0.001, 1),
-            'subsample': trial.suggest_discrete_uniform('subsample', 0.5, 1, 0.1),
-            'colsample_bytree': trial.suggest_discrete_uniform('colsample_bytree', 0.5, 1, 0.1),
-            'gamma': trial.suggest_loguniform('gamma', 0.001, 10),
-            'reg_alpha': trial.suggest_loguniform('reg_alpha', 0.001, 10),
-            'reg_lambda': trial.suggest_loguniform('reg_lambda', 0.001, 10),
+            'n_estimators': trial.suggest_int("n_estimators", 50, 500),
+            'max_depth': trial.suggest_int("max_depth", 3, 15),
+            'learning_rate': trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+            'subsample': trial.suggest_float("subsample", 0.5, 1.0),
+            'colsample_bytree': trial.suggest_float("colsample_bytree", 0.5, 1.0),
+            'gamma': trial.suggest_float("gamma", 0, 5),
+            'reg_alpha': trial.suggest_float("reg_alpha", 0, 10),
+            'reg_lambda': trial.suggest_float("reg_lambda", 0, 10),
             'random_state': random_state,
-            'objective': 'binary:logistic',
-            'n_jobs': -1
             }
 
     model = XGBClassifier(**params)
@@ -168,13 +164,13 @@ def objective_xgb(trial):
 
 
 # %%
-dt_study, dt_execution_seconds = run_study(objective_dt, n_trials=50)
+dt_study, dt_execution_seconds = run_study(objective_dt, n_trials=5)
 
 # %%
-rf_study, rf_execution_seconds = run_study(objective_rf, n_trials=50)
+rf_study, rf_execution_seconds = run_study(objective_rf, n_trials=5)
 
 # %%
-xgb_study, xgb_execution_seconds = run_study(objective_xgb, n_trials=50)
+xgb_study, xgb_execution_seconds = run_study(objective_xgb, n_trials=5)
 
 # %%
 # create a df with the results
@@ -240,3 +236,48 @@ df_results['f1'] = model_metrics[3]
 df_results
 
 # %%
+def roc_curve_metrics(model, X, y):
+    y_pred_proba = model.predict_proba(X)[:, 1]
+    fpr, tpr, thresholds = metrics.roc_curve(y, y_pred_proba)
+    auc = metrics.roc_auc_score(y, y_pred_proba)
+
+    return fpr, tpr, thresholds, auc
+
+# %%
+# plot auc with hue as model
+fig, ax = plt.subplots(figsize=(10, 6))
+
+viz_df = pd.DataFrame(columns=['model', 'fpr', 'tpr', 'auc', 'thresholds'])
+
+fpr, tpr, thresholds, auc = roc_curve_metrics(best_dt, X_test, y_test)
+viz_df = viz_df.append({
+    'model': 'Decision Tree',
+    'fpr': fpr,
+    'tpr': tpr,
+    'auc': auc,
+    'thresholds': thresholds
+    }, ignore_index=True)
+
+fpr, tpr, thresholds, auc = roc_curve_metrics(best_rf, X_test, y_test)
+viz_df = viz_df.append({
+    'model': 'Random Forest',
+    'fpr': fpr,
+    'tpr': tpr,
+    'auc': auc,
+    'thresholds': thresholds
+    }, ignore_index=True)
+
+fpr, tpr, thresholds, auc = roc_curve_metrics(best_xgb, X_test, y_test)
+viz_df = viz_df.append({
+    'model': 'XGBoost',
+    'fpr': fpr,
+    'tpr': tpr,
+    'auc': auc,
+    'thresholds': thresholds
+    }, ignore_index=True)
+
+sns.lineplot(data=viz_df, x='fpr', y='tpr', hue='model', ax=ax)
+
+plt.title('ROC Curve')
+
+plt.show()
