@@ -144,6 +144,9 @@ train_df = pd.get_dummies(train_df,
                           drop_first=False).astype(float)
 
 # %%
+train_df['FamilySize'] = train_df['SibSp'] + train_df['Parch'] + 1
+
+# %%
 train_df
 
 # %% [markdown]

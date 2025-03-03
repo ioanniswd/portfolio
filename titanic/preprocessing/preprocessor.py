@@ -33,6 +33,8 @@ class Preprocessor:
                 drop_first=False
                 ).astype(float)
 
+        X['FamilySize'] = X['SibSp'] + X['Parch'] + 1
+
         return X
 
     def fit_transform(self, X, y=None):
