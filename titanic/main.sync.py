@@ -520,6 +520,9 @@ submission = pd.DataFrame({
 submission['Survived'].value_counts()
 
 # %%
+submission['Survived'] = submission['Survived'].astype(int)
+
+# %%
 submission.to_csv('data/submission.csv', index=False)
 
 # %%
