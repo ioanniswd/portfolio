@@ -41,3 +41,12 @@ The notebook contains the EDA, data preprocessing, hyperparameter tuning, and
 the final model, as well as a statistical analysis of the clusters and some
 actionable insights.
 
+### [Adjusting Monthly Targets to a Daily Level](./target-adjustment)
+Targets are usually provided on a monthly, quarterly, or yearly level.
+However, when tracking performance, we want to see if we are on track to meet
+our targets on a daily basis, not at the end of the month, quarter or year, in
+order to make adjustments in time.
+<br />
+Using the [Walmart sales dataset](https://www.kaggle.com/datasets/devarajv88/walmart-sales-dataset) from Kaggle, I adjusted monthly sales targets to a daily level, using a number of Machine Learning models, including XGBoost, Random Forest, and Linear Regression.
+
+![Actual vs Predicted Daily GMV](./target-adjustment/actual_vs_predicted_daily_gmv.png)
