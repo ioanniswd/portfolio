@@ -26,8 +26,11 @@ import matplotlib.font_manager as fm
 
 from prophet import Prophet
 from neuralprophet import NeuralProphet
+# xgboost
+from xgboost import XGBRegressor
 import optuna
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.model_selection import train_test_split
 
 # %%
 # Verify cuda is a available
@@ -36,6 +39,9 @@ import torch
 print(torch.__version__)
 print(torch.cuda.is_available())      # Should be True
 # print(torch.cuda.get_device_name(0))  # Should show your GPU name
+
+# %%
+RANDOM_STATE = 42
 
 # %% [markdown]
 # ## Visualization Setup
@@ -296,7 +302,7 @@ forecast_df_val['ds'].min()
 # %%
 
 # %%
-def evaluate_model(model, train_df, val_df):
+def evaluate_model(model, val_df):
     # Forecast on validation
     future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
     forecast_df = model.predict(future_df.tail(len(val_df)))
@@ -327,7 +333,7 @@ def plot_results(y_true_val, y_pred_val):
 
 # %%
 val_mae, y_pred_val, y_true_val = evaluate_model(
-    best_prophet_model, train_df, val_df
+    best_prophet_model, val_df
 )
 
 val_mean = val_df['y'].mean()
@@ -338,10 +344,97 @@ print(f"Validation MAE / Mean: {val_mae / val_mean:.4f}")
 # Plot results
 plot_results(y_true_val, y_pred_val)
 
+# %%
+
+# %%
+future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
+forecast_df = model.predict(future_df.tail(len(val_df)))
+forecast_df
+
+# %%
+forecast_df.head(1).T
+
+# %%
+forecast_df.columns
+
+# %%
+forecast_df['y'] = val_df['y'].values
+forecast_df['residual'] = forecast_df['yhat'] - forecast_df['y']
+
+# %%
+residual_train_val_test_df = forecast_df.copy().drop(columns=['y'])
+
+residual_train_val_test_df['day'] = residual_train_val_test_df['ds'].dt.day
+residual_train_val_test_df['month'] = residual_train_val_test_df['ds'].dt.month
+residual_train_val_test_df['year'] = residual_train_val_test_df['ds'].dt.year
+residual_train_val_test_df['hour'] = residual_train_val_test_df['ds'].dt.hour
+residual_train_val_test_df['day_of_week'] = residual_train_val_test_df['ds'].dt.dayofweek
+residual_train_val_test_df['day_of_year'] = residual_train_val_test_df['ds'].dt.dayofyear
+residual_train_val_test_df['week_of_year'] = residual_train_val_test_df['ds'].dt.isocalendar().week
+residual_train_val_test_df['quarter'] = residual_train_val_test_df['ds'].dt.quarter
+
+residual_train_val_test_df.drop(columns=['ds'], inplace=True)
+
+X = residual_train_val_test_df.drop(columns=['residual', 'yhat'])
+y = residual_train_val_test_df['residual']
+
+# Split: train (60%), val (20%), test (20%)
+X_train_val, X_test, y_train_val, y_test = train_test_split(
+        X, y, test_size=0.2,
+        random_state=RANDOM_STATE, shuffle=False
+        )
+
+X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val,
+        y_train_val,
+        test_size=0.25,
+        random_state=RANDOM_STATE,
+        shuffle=False
+        )
+
 
 # %%
 
 # %%
+def objective_xgboost(trial):
+    params = {
+        'tree_method': 'gpu_hist',
+        'predictor': 'gpu_predictor',
+        'n_estimators': trial.suggest_int('n_estimators', 50, 500, step=50),
+        'max_depth': trial.suggest_int('max_depth', 3, 10),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
+        'subsample': trial.suggest_float('subsample', 0.5, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
+        'reg_alpha': trial.suggest_float('reg_alpha', 0.0, 1.0),
+        'reg_lambda': trial.suggest_float('reg_lambda', 0.0, 1.0),
+        'random_state': RANDOM_STATE
+    }
+
+    model = XGBRegressor(**params)
+    model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+
+    y_pred = model.predict(X_val)
+    rmse = mean_squared_error(y_val, y_pred, squared=False)  # RMSE
+
+    return rmse
+
+
+# %%
+# %%time
+study_xgb = optuna.create_study(direction="minimize")
+study_xgb.optimize(objective_xgboost, n_trials=50, timeout=600)
+
+print("Best parameters for XGBoost:", study_xgb.best_params)
+print("Best validation RMSE for XGBoost:", study_xgb.best_value)
+
+# %%
+best_xgb_model = XGBRegressor(**study_xgb.best_params)
+best_xgb_model.fit(X_train_val, y_train_val)
+
+# %%
+corrected_future_df = model.make_future_dataframe(periods=len(test_df), freq='H')
+forecast_df_test = model.predict(corrected_future_df.tail(len(test_df)))
+
 
 # %%
 
