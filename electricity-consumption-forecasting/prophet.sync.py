@@ -152,6 +152,37 @@ train_val_test_df.head()
 # %%
 train_val_test_df.info()
 
+# %% [markdown]
+# ### Some sanity checks
+
+# %%
+train_val_test_df['ds'].min(), train_val_test_df['ds'].max()
+
+# %%
+train_val_test_df.isna().sum()
+
+# %%
+train_val_test_df['ds'].value_counts().value_counts()
+
+# %%
+value_counts = train_val_test_df['ds'].value_counts()
+value_counts[value_counts > 1].sort_values(ascending=False)
+
+# %%
+train_val_test_df['ds'].duplicated().sum()
+
+# %%
+train_val_test_df[train_val_test_df['ds'].duplicated(keep=False)].sort_values(by='ds')
+
+# %% [markdown]
+# Let's drop duplicates and keep the last entry
+
+# %%
+train_val_test_df = train_val_test_df.drop_duplicates(
+        subset='ds',
+        keep='last'
+        ).reset_index(drop=True)
+
 # %%
 total_days = (train_val_test_df['ds'].max() - train_val_test_df['ds'].min()).days
 
@@ -218,11 +249,56 @@ print("Best validation MAE:", study.best_value)
 best_prophet_model = Prophet(**best_prophet_params)
 best_prophet_model.fit(train_df)
 
+# %%
+model = best_prophet_model
+future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
+forecast_df = model.predict(future_df)
+forecast_df_val = forecast_df[forecast_df['ds'].isin(val_df['ds'])]
 
 # %%
-def evaluate_model(model, train_df, val_df, test_df):
+len(val_df)
+
+# %%
+len(future_df)
+
+# %%
+len(forecast_df)
+
+# %%
+len(forecast_df_val)
+
+# %%
+forecast_df_val.info()
+
+# %%
+val_df.info()
+
+# %%
+forecast_df_val['ds'].duplicated().sum()
+
+# %%
+val_df['ds'].duplicated().sum()
+
+# %%
+set(val_df['ds'].astype(str).values) - set(forecast_df_val['ds'].astype(str).values)
+
+# %%
+forecast_df_val['ds'].max()
+
+# %%
+forecast_df_val['ds'].min()
+
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+def evaluate_model(model, train_df, val_df):
     # Forecast on validation
-    future_df = model.make_future_dataframe(periods=len(val_df), freq='D')
+    future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
     forecast_df = model.predict(future_df.tail(len(val_df)))
 
     # Match forecast to actuals
@@ -231,35 +307,15 @@ def evaluate_model(model, train_df, val_df, test_df):
 
     val_mae = mean_absolute_error(y_true_val, y_pred_val)
 
-    # Forecast on test data
-    future_test_df = model.make_future_dataframe(periods=len(test_df), freq='D')
-    forecast_test_df = model.predict(future_test_df.tail(len(test_df)))
+    return val_mae, y_pred_val, y_true_val
 
-    y_pred_test = forecast_test_df['yhat'].values
-    y_true_test = test_df['y'].values
-
-    test_mae = mean_absolute_error(y_true_test, y_pred_test)
-
-    return val_mae, test_mae, y_pred_val, y_true_val, y_pred_test, y_true_test
-
-def plot_results(y_true_val, y_pred_val, y_true_test, y_pred_test):
+def plot_results(y_true_val, y_pred_val):
     plt.figure(figsize=(14, 7))
 
     # Validation set
-    plt.subplot(1, 2, 1)
     plt.plot(y_true_val, label='Actual (Validation)', color='blue', alpha=0.7)
     plt.plot(y_pred_val, label='Predicted (Validation)', color='orange', linestyle='--', alpha=0.7)
     plt.title('Validation Set Predictions')
-    plt.xlabel('Time')
-    plt.ylabel('MW')
-    plt.legend()
-    plt.grid(True)
-
-    # Test set
-    plt.subplot(1, 2, 2)
-    plt.plot(y_true_test, label='Actual (Test)', color='blue', alpha=0.7)
-    plt.plot(y_pred_test, label='Predicted (Test)', color='orange', linestyle='--', alpha=0.7)
-    plt.title('Test Set Predictions')
     plt.xlabel('Time')
     plt.ylabel('MW')
     plt.legend()
@@ -270,16 +326,20 @@ def plot_results(y_true_val, y_pred_val, y_true_test, y_pred_test):
 
 
 # %%
-val_mae, test_mae, y_pred_val, y_true_val, y_pred_test, y_true_test = evaluate_model(
-    best_prophet_model, train_df, val_df, test_df
+val_mae, y_pred_val, y_true_val = evaluate_model(
+    best_prophet_model, train_df, val_df
 )
 
+val_mean = val_df['y'].mean()
 print(f"Validation MAE: {val_mae:.4f}")
-print(f"Test MAE: {test_mae:.4f}")
+print(f"Validation MAE / Mean: {val_mae / val_mean:.4f}")
 
+# %%
 # Plot results
-plot_results(y_true_val, y_pred_val, y_true_test, y_pred_test)
+plot_results(y_true_val, y_pred_val)
 
+
+# %%
 
 # %%
 
@@ -356,7 +416,7 @@ check_train_val_gap(train_df, val_df)
 
 # %%
 test_model = NeuralProphet()
-test_model.fit(train_df, freq='D')
+test_model.fit(train_df, freq='H')
 
 # %%
 # %%time
@@ -377,7 +437,7 @@ best_model = NeuralProphet(
     loss_func=study.best_params['loss_func']
 )
 
-best_model.fit(train_data, freq='D')
+best_model.fit(train_data, freq='H')
 
 # Final evaluation
 future = best_model.make_future_dataframe(
