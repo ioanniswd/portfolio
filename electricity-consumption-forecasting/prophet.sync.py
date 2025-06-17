@@ -25,6 +25,7 @@ import seaborn as sns
 import matplotlib.font_manager as fm
 
 from prophet import Prophet
+from prophet.diagnostics import cross_validation, performance_metrics
 from neuralprophet import NeuralProphet
 # xgboost
 from xgboost import XGBRegressor
@@ -204,6 +205,10 @@ val_df   = train_val_test_df[(train_val_test_df['ds'] > train_end) & (train_val_
 test_df  = train_val_test_df[train_val_test_df['ds'] > val_end]
 
 # %%
+# Define the horizon for the Prophet model to predict
+horizon_hours = 168  # in hours
+
+# %%
 # print size, min and max dates of each set
 print(f"Train set:      {train_df.shape}, {train_df['ds'].min()} - {train_df['ds'].max()}")
 print(f"Validation set: {val_df.shape}, {val_df['ds'].min()} - {val_df['ds'].max()}")
@@ -225,21 +230,60 @@ def objective_prophet(trial):
         "holidays_prior_scale":    trial.suggest_float("holidays_prior_scale", 0.01, 10.0, log=True),
         "seasonality_mode":        trial.suggest_categorical("seasonality_mode", ["additive", "multiplicative"]),
         "changepoint_range":       trial.suggest_float("changepoint_range", 0.8, 0.95),
+        # 95% confidence interval
+        "interval_width": 0.95,
     }
 
     model = Prophet(**params)
     model.fit(train_df)
 
     # Forecast on validation
-    future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
-    forecast_df = model.predict(future_df.tail(len(val_df)))
+    # future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
+    # forecast_df = model.predict(future_df.tail(len(val_df)))
 
-    # Match forecast to actuals
-    y_pred = forecast_df['yhat'].values
-    y_true = val_df['y'].values
+    # # Match forecast to actuals
+    # y_pred = forecast_df['yhat'].values
+    # y_true = val_df['y'].values
 
-    return mean_absolute_error(y_true, y_pred)
+    # return mean_absolute_error(y_true, y_pred)
 
+    # Cross-validation
+    df_cv = cross_validation(
+        model,
+        initial='180 days',    # Use 6 months for training window
+        period='7 days',       # Retrain every 7 days
+        horizon=f'{horizon_hours} hours',    # Forecast 1 day ahead
+        parallel="processes"   # Optional: parallelizes across cores
+    )
+
+    # Evaluate using MAE (can use other metrics if needed)
+    df_p = performance_metrics(df_cv, rolling_window=1)
+    mae = df_p['mae'].mean()
+
+    return mae
+
+
+# %%
+# %%time
+
+df_cv = cross_validation(
+    best_prophet_model,
+    initial='1095 days',     # 3 years
+    period='180 days',       # Evaluate every 6 months
+    horizon='168 hours',     # Forecast 1 week ahead
+    parallel="processes"
+)
+
+df_cv.shape
+
+# %%
+df_p = performance_metrics(df_cv, rolling_window=1)
+mae = df_p['mae'].mean()
+
+# %%
+mae
+
+# %%
 
 # %%
 # %%time
@@ -347,12 +391,19 @@ plot_results(y_true_val, y_pred_val)
 # %%
 
 # %%
+
+# %%
 future_df = model.make_future_dataframe(periods=len(val_df), freq='H')
 forecast_df = model.predict(future_df.tail(len(val_df)))
 forecast_df
 
 # %%
 forecast_df.head(1).T
+
+# %%
+best_prophet_model.plot(forecast_df)
+plt.xlim(pd.Timestamp('2013-08-01'), pd.Timestamp('2013-10-31'))
+plt.show()
 
 # %%
 forecast_df.columns
@@ -435,6 +486,18 @@ best_xgb_model.fit(X_train_val, y_train_val)
 corrected_future_df = model.make_future_dataframe(periods=len(test_df), freq='H')
 forecast_df_test = model.predict(corrected_future_df.tail(len(test_df)))
 
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
 
 # %%
 
