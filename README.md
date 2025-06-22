@@ -50,3 +50,8 @@ order to make adjustments in time.
 Using the [Walmart sales dataset](https://www.kaggle.com/datasets/devarajv88/walmart-sales-dataset) from Kaggle, I adjusted monthly sales targets to a daily level, using a number of Machine Learning models, including XGBoost, Random Forest, and Linear Regression.
 
 ![Actual vs Predicted Daily GMV](./target-adjustment/actual_vs_predicted_daily_gmv.png)
+
+### [Creating Animated Plots using Multiprocessing in Python](./animated-plotting)
+Using the [Household Electric Power Consumption](https://www.kaggle.com/datasets/uciml/electric-power-consumption-data-set) I created a set of visualizations which I later animated using `ffmpeg`.
+![Demo](./animated-plotting/bar_chart.gif)
+
