@@ -55,3 +55,15 @@ Using the [Walmart sales dataset](https://www.kaggle.com/datasets/devarajv88/wal
 Using the [Household Electric Power Consumption](https://www.kaggle.com/datasets/uciml/electric-power-consumption-data-set) I created a set of visualizations which I later animated using `ffmpeg`.
 ![Demo](./animated-plotting/bar_chart.gif)
 
+### [Energy Load Forecasting using Facebook Prophet](./energy-load-forecasting)
+
+Scenario:<br />
+A company creates an app that helps minimize energy costs for users,
+figuring out when to use batteries and when to use the grid. To do this, they need to forecast the energy load for the next 2 days.
+
+I used the [Hourly Energy Consumption](https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption) dataset from Kaggle, which contains data for several years and predicted the energy load for every hour in the next 2 days using Facebook Prophet.
+I used a rolling origin evaluation, Mean Absolute Error (MAE) and Mean
+Absolute Percentage Error (MAPE) to evaluate the model.
+
+![Forecast](./energy-load-forecasting/assets/forecast.png)
+
