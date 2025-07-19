@@ -1,0 +1,12 @@
+version: 2
+sources:
+  - name: source_data
+    schema: main  # Explicitly tell dbt the source table is in main schema
+    tables:
+      - name: taxi_trips
+
+models:
+  - name: stg_taxi_trips
+    description: Filter invalid trips
+  - name: mart_trip_summary
+    description: Daily trip summaries

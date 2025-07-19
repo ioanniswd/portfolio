@@ -1,0 +1,7 @@
+*.duckdb
+*.duckdb.wal
+data/*.csv
+dbt_modules/
+target/
+logs/
+data/
