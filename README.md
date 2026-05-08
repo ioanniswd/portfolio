@@ -67,3 +67,7 @@ Absolute Percentage Error (MAPE) to evaluate the model.
 
 ![Forecast](./energy-load-forecasting/assets/forecast.png)
 
+### [Gantt Chart Generator](./gantt)
+A simple Claude skill that generates Gantt charts from a JSON config using Python. Supports task dependencies, duration uncertainty (min/max ranges rendered as solid + hatched bars), parallel workstreams, and vertical markers for kick-off and delivery dates.
+
+![Roadmap Example](./gantt/roadmap_example.png)
