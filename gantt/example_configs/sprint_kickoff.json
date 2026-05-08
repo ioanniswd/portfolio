@@ -1,0 +1,15 @@
+{
+  "title": "Sprint Kickoff",
+  "subtitle": "5-step delivery",
+  "theme": "dark",
+  "output": "/tmp/gantt_sprint.png",
+  "dpi": 150,
+  "today": "2025-03-10",
+  "tasks": [
+    { "name": "Discovery & scoping", "start": "2025-03-03", "duration": 5,  "category": "Discovery"     },
+    { "name": "Technical design",    "depends_on": "Discovery & scoping",    "duration": 8,  "category": "Design & Build" },
+    { "name": "Implementation",      "depends_on": "Technical design",       "duration": 10, "category": "Implementation" },
+    { "name": "Testing & QA",        "depends_on": "Implementation",         "duration": 7,  "category": "Validation"     },
+    { "name": "Deploy & handover",   "depends_on": "Testing & QA",           "duration": 3,  "category": "Implementation" }
+  ]
+}

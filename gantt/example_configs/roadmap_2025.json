@@ -1,0 +1,27 @@
+{
+  "title": "Project Roadmap 2025",
+  "subtitle": "Engineering & Data workstreams",
+  "theme": "dark",
+  "output": "/tmp/gantt_roadmap.png",
+  "figsize": [16, 8],
+  "dpi": 150,
+  "today": "2025-05-15",
+  "show_today": true,
+  "tasks": [
+    { "name": "Requirements & scoping",  "start": "2025-01-06", "duration": 25,  "category": "Phase 1 — Discovery" },
+    { "name": "Stakeholder interviews",  "start": "2025-01-13", "duration": 25,  "category": "Phase 1 — Discovery" },
+    { "name": "Architecture design",     "depends_on": "Requirements & scoping",                             "duration": 30, "category": "Phase 2 — Build" },
+    { "name": "Backend development",     "depends_on": "Architecture design",                                "duration_range": [75, 98], "category": "Phase 2 — Build" },
+    { "name": "Data pipeline setup",     "depends_on": "Architecture design",                                "duration": 52, "category": "Phase 2 — Build" },
+    { "name": "Frontend development",    "depends_on": "Architecture design",                                "duration": 89, "category": "Phase 2 — Build" },
+    { "name": "QA & testing",            "depends_on": ["Backend development", "Data pipeline setup"],       "duration_range": [53, 70], "category": "Phase 3 — Launch" },
+    { "name": "User acceptance testing", "depends_on": "QA & testing",                                      "duration": 30, "category": "Phase 3 — Launch" },
+    { "name": "Production deployment",   "depends_on": "User acceptance testing",                           "duration": 11, "category": "Phase 3 — Launch" },
+    { "name": "Post-launch monitoring",  "depends_on": "Production deployment",                             "duration": 28, "category": "Phase 3 — Launch" }
+  ],
+  "category_colors": {
+    "Phase 1 — Discovery": "#31859D",
+    "Phase 2 — Build":     "#C59849",
+    "Phase 3 — Launch":    "#A53F2B"
+  }
+}
