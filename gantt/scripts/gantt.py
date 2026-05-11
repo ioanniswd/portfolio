@@ -69,6 +69,28 @@ def _fmt_date(dt: datetime) -> str:
     return dt.strftime("%-d %b %Y")
 
 
+def _add_working_days(start: datetime, days: int) -> datetime:
+    """Advance `start` by `days` working days, skipping Sat/Sun."""
+    current = start
+    remaining = days
+    while remaining > 0:
+        current += timedelta(days=1)
+        if current.weekday() < 5:  # Mon–Fri
+            remaining -= 1
+    return current
+
+
+def _count_working_days(start: datetime, end: datetime) -> int:
+    """Count Mon–Fri days in [start, end)."""
+    count = 0
+    day = start
+    while day < end:
+        if day.weekday() < 5:
+            count += 1
+        day += timedelta(days=1)
+    return count
+
+
 def _friendly_duration(min_days: int, max_days: int) -> str:
     def fmt(d: int) -> str:
         if d < 7:
@@ -85,6 +107,8 @@ def _friendly_duration(min_days: int, max_days: int) -> str:
 
     if min_days == max_days:
         return fmt(min_days)
+    if max_days < 7:
+        return f"{min_days}–{max_days} days"
     if min_days % 30 == 0 and max_days % 30 == 0:
         return f"{min_days // 30}–{max_days // 30} months"
     min_w, max_w = min_days / 7, max_days / 7
@@ -151,14 +175,14 @@ def _resolve_dates(tasks: list[dict], use_min_durations: bool = False) -> list[d
             raise ValueError(f"Task '{name}' needs a start date, depends_on, or start_offset")
         start = max(start_candidates)
 
-        # duration / duration_range / end
+        # duration / duration_range / end  (durations are in working days)
         if "duration_range" in task:
             min_dur, max_dur = task["duration_range"]
-            min_end = start + timedelta(days=int(min_dur))
+            min_end = _add_working_days(start, int(min_dur))
             # In optimistic mode both ends use min_dur so downstream tasks chain from it
-            max_end = start + timedelta(days=int(min_dur if use_min_durations else max_dur))
+            max_end = _add_working_days(start, int(min_dur if use_min_durations else max_dur))
         elif "duration" in task:
-            min_end = max_end = start + timedelta(days=int(task["duration"]))
+            min_end = max_end = _add_working_days(start, int(task["duration"]))
         elif "end" in task:
             min_end = max_end = _parse(task["end"])
         else:
@@ -229,15 +253,13 @@ def render(config: dict) -> None:
     ax.set_facecolor(c["bg"])
 
     # X range with padding
-    all_starts   = [_parse(t["start"])    for t in tasks]
-    all_min_ends = [_parse(t["_min_end"]) for t in tasks]
-    all_ends     = [_parse(t["end"])      for t in tasks]
+    all_starts = [_parse(t["start"]) for t in tasks]
+    all_ends   = [_parse(t["end"])   for t in tasks]
     span_days = (max(all_ends) - min(all_starts)).days
     pad = timedelta(days=max(7, int(span_days * 0.03)))
-    ax.set_xlim(
-        mdates.date2num(min(all_starts) - pad),
-        mdates.date2num(max(all_ends) + pad),
-    )
+    x_min = min(all_starts) - pad
+    x_max = max(all_ends) + pad
+    ax.set_xlim(mdates.date2num(x_min), mdates.date2num(x_max))
 
     # Task bars
     bar_height = 0.5
@@ -296,9 +318,9 @@ def render(config: dict) -> None:
 
     # Y-axis (task names + duration)
     def _label(t: dict) -> str:
-        min_days = (_parse(t["_min_end"]) - _parse(t["start"])).days
-        max_days = (_parse(t["end"])      - _parse(t["start"])).days
-        return f"{t['name']}  ({_friendly_duration(min_days, max_days)})"
+        min_wd = _count_working_days(_parse(t["start"]), _parse(t["_min_end"]))
+        max_wd = _count_working_days(_parse(t["start"]), _parse(t["end"]))
+        return f"{t['name']}  ({_friendly_duration(min_wd, max_wd)})"
 
     ax.set_yticks(range(n))
     ax.set_yticklabels(
