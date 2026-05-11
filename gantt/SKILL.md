@@ -12,7 +12,7 @@ Generates a styled Gantt chart PNG from a JSON config file or inline JSON string
 ## Invocation
 
 ```bash
-python scripts/gantt.py --config example_configs/data_migration.json
+python scripts/gantt.py --config example_configs/roadmap_2025.json
 python scripts/gantt.py --json '{"title": "...", "tasks": [...]}'
 ```
 
@@ -112,7 +112,6 @@ See `example_configs/` for ready-to-run configs:
 
 | File | Description |
 |---|---|
-| `data_migration.json` | 8-task data platform project with dependencies, uncertainty, and parallel work |
 | `roadmap_2025.json` | 10-task phased product roadmap |
 | `sprint_kickoff.json` | 5-task sprint spanning weeks (demonstrates auto date-axis scaling) |
 
