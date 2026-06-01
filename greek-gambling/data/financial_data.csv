@@ -1,0 +1,157 @@
+year,category,metric,value_eur_millions,notes
+2012,OPAP,Turnover,3775.25,Land-based only; source: 2013 annual report table
+2012,OPAP,GGR,1235.08,Land-based only; source: 2013 annual report table
+2012,Casinos,Turnover,1890.16,source: 2013 annual report table
+2012,Casinos,GGR,330.17,source: 2013 annual report table
+2012,State_Lotteries,Turnover,263.88,source: 2013 annual report table
+2012,State_Lotteries,GGR,97.51,source: 2013 annual report table
+2012,ODIE,Turnover,84.39,Horse racing; source: 2013 annual report table
+2012,ODIE,GGR,20.29,Horse racing; source: 2013 annual report table
+2012,Online,Turnover,,No regulated online market data available for 2012
+2012,Online,GGR,,No regulated online market data available for 2012
+2012,Total,Turnover,6013.68,Excludes online (unregulated); source: 2013 annual report table
+2012,Total,GGR,1683.05,Excludes online; source: 2013 annual report table
+2013,OPAP,Turnover,3504.29,Land-based only; source: 2013 annual report table
+2013,OPAP,GGR,1150.15,Land-based only; source: 2013 annual report table
+2013,Casinos,Turnover,1687.70,source: 2013 annual report table
+2013,Casinos,GGR,298.67,source: 2013 annual report table
+2013,State_Lotteries,Turnover,238.23,source: 2013 annual report table
+2013,State_Lotteries,GGR,90.90,source: 2013 annual report table
+2013,ODIE,Turnover,65.02,Horse racing; source: 2013 annual report table
+2013,ODIE,GGR,15.82,Horse racing; source: 2013 annual report table
+2013,Online,Turnover,1648.00,Approx; companies operating under Art.50 Law 4002/2011; source: 2013 report text
+2013,Online,GGR,96.00,Approx; source: 2013 annual report text
+2013,Total,Turnover,7143.24,Includes online; source: 2013 annual report
+2013,Total,GGR,1651.54,Includes online; source: 2013 annual report
+2014,OPAP,Turnover,3759.71,Land-based only; source: 2014 annual report
+2014,OPAP,GGR,1199.60,Land-based only; source: 2014 annual report
+2014,Casinos,Turnover,1599.94,source: 2014 annual report
+2014,Casinos,GGR,275.27,source: 2014 annual report
+2014,State_Lotteries,Turnover,479.57,Ελληνικά Λαχεία started May 2014; source: 2014 annual report
+2014,State_Lotteries,GGR,190.71,source: 2014 annual report
+2014,ODIE,Turnover,50.01,Horse racing; source: 2014 annual report
+2014,ODIE,GGR,11.54,Horse racing; source: 2014 annual report
+2014,Online,Turnover,2462.00,Approx; companies under Art.50 Law 4002/2011; source: 2014 report text
+2014,Online,GGR,116.00,Approx; source: 2014 annual report text
+2014,Total,Turnover,8351.23,Includes online; source: 2014 annual report
+2014,Total,GGR,1793.12,Includes online; source: 2014 annual report
+2015,OPAP,Turnover,3603.42,Land-based only; source: 2015 annual report
+2015,OPAP,GGR,1168.07,Land-based only; source: 2015 annual report
+2015,Casinos,Turnover,1571.40,source: 2015 annual report
+2015,Casinos,GGR,264.94,source: 2015 annual report
+2015,State_Lotteries,Turnover,449.57,source: 2015 annual report
+2015,State_Lotteries,GGR,173.90,source: 2015 annual report
+2015,ODIE,Turnover,34.75,Horse racing; source: 2015 annual report
+2015,ODIE,GGR,3.37,Horse racing; source: 2015 annual report
+2015,Online,Turnover,3090.02,Companies under Art.50 Law 4002/2011; source: 2015 annual report table
+2015,Online,GGR,123.14,source: 2015 annual report table
+2015,Total,Turnover,9749.16,Includes online; source: 2015 annual report
+2015,Total,GGR,1733.42,Includes online; source: 2015 annual report
+2016,OPAP,Turnover,3505.96,Land-based (excl. VLT which started 2017); source: 2016 annual report
+2016,OPAP,GGR,1147.94,Land-based; source: 2016 annual report
+2016,Casinos,Turnover,1577.85,source: 2016 annual report
+2016,Casinos,GGR,262.72,source: 2016 annual report
+2016,State_Lotteries,Turnover,454.46,source: 2016 annual report
+2016,State_Lotteries,GGR,174.29,source: 2016 annual report
+2016,ODIE,Turnover,38.56,Horse racing; source: 2016 annual report (chart value confirmed in 2021 report)
+2016,ODIE,GGR,9.49,Horse racing; source: 2016 annual report (chart value confirmed in 2021 report)
+2016,Online,Turnover,5025.24,Companies under Art.50 Law 4002/2011; source: 2016 annual report table
+2016,Online,GGR,215.10,source: 2016 annual report table
+2016,Total,Turnover,10602.07,Includes online; source: 2016 annual report
+2016,Total,GGR,1809.54,Includes online; source: 2016 annual report
+2017,OPAP,Turnover,3983.97,Land-based incl. VLT (introduced late 2017); source: 2021 report table
+2017,OPAP,GGR,1196.50,Land-based; source: 2021 report table
+2017,Casinos,Turnover,1582.00,source: 2017 annual report (TGR Tables 460M + Slots 1122M)
+2017,Casinos,GGR,253.00,source: 2017 annual report (GGR Tables 84M + Slots 170M = 254M; rounding)
+2017,State_Lotteries,Turnover,458.74,source: 2020 report Ελληνικά Λαχεία table
+2017,State_Lotteries,GGR,172.92,source: 2020 report Ελληνικά Λαχεία table
+2017,ODIE,Turnover,40.69,Horse racing; source: 2021 report chart
+2017,ODIE,GGR,10.55,Horse racing; source: 2021 report chart
+2017,Online,Turnover,7289.00,Approx; companies under Art.50 Law 4002/2011; derived from 2020 report growth rates
+2017,Online,GGR,289.00,Approx; derived from 2020 report growth rates and market shares
+2017,Total,Turnover,13364.00,Approx includes online; source: 2017 annual report
+2017,Total,GGR,1926.00,Approx includes online; source: 2017 annual report
+2018,OPAP,Turnover,4743.63,Land-based incl. VLT; source: 2022 report table (confirmed 2021 report)
+2018,OPAP,GGR,1292.44,Land-based; source: 2022 report table (confirmed 2021 report)
+2018,Casinos,Turnover,1590.00,source: 2018/2020 reports (TGR Tables 452M + Slots 1138M = 1590M)
+2018,Casinos,GGR,247.00,source: 2018/2020 reports (GGR Tables 84M + Slots 163M = 247M)
+2018,State_Lotteries,Turnover,443.52,source: 2021 report Ελληνικά Λαχεία table
+2018,State_Lotteries,GGR,173.10,source: 2021 report Ελληνικά Λαχεία table
+2018,ODIE,Turnover,36.22,Horse racing; source: 2021 report chart
+2018,ODIE,GGR,9.40,Horse racing; source: 2021 report chart
+2018,Online,Turnover,8898.00,Approx; companies under Art.50; 2020 report states online was 53.31% of total TGR in 2019 vs 36.21% in 2020; derived from 2019 total
+2018,Online,GGR,382.00,Approx; derived: 2020 report states online GGR grew 34.46% 2019->2020 to reach 585.79M; back-calc
+2018,Total,Turnover,15711.00,Approx includes online; source: 2018 annual report derived
+2018,Total,GGR,2103.96,Approx includes online; source: 2018 annual report derived
+2019,OPAP,Turnover,5296.67,Land-based incl. VLT; source: 2022 report table (confirmed 2023 report)
+2019,OPAP,GGR,1361.39,Land-based; source: 2022 report table (confirmed 2023 report)
+2019,Casinos,Turnover,1680.00,source: 2019/2020 reports (TGR Tables 468M + Slots 1212M = 1680M)
+2019,Casinos,GGR,246.00,source: 2019/2020 reports (GGR Tables 83M + Slots 163M = 246M)
+2019,State_Lotteries,Turnover,442.02,source: 2022 report Ελληνικά Λαχεία table
+2019,State_Lotteries,GGR,174.36,source: 2022 report Ελληνικά Λαχεία table
+2019,ODIE,Turnover,34.14,Horse racing; source: 2021 report chart
+2019,ODIE,GGR,8.60,Horse racing; source: 2021 report chart
+2019,Online,Turnover,8934.00,Derived: 2020 online TGR 12138.4M grew 35.85% vs 2019 → 2019 = 12138.4/1.3585 ≈ 8934M
+2019,Online,GGR,435.70,Derived: 2020 online GGR 585.79M grew 34.46% vs 2019 → 2019 = 585.79/1.3446 ≈ 435.7M
+2019,Total,Turnover,16387.00,Derived from category totals; confirmed by 2020 report total ~16610 less growth rate
+2019,Total,GGR,2225.00,Approx derived from category totals
+2020,OPAP,Turnover,3601.44,Land-based; COVID-19 impact; source: 2021 report table (confirmed 2022 report)
+2020,OPAP,GGR,903.71,Land-based; COVID-19 impact; source: 2021 report table (confirmed 2022 report)
+2020,Casinos,Turnover,647.41,COVID-19 impact; source: 2021 report summary table (647.407M)
+2020,Casinos,GGR,85.26,COVID-19 impact; source: 2021 report summary table (85.265M)
+2020,State_Lotteries,Turnover,199.14,COVID-19 impact; source: 2021 report table (confirmed 2023 report)
+2020,State_Lotteries,GGR,40.93,COVID-19 impact; source: 2021 report table (confirmed 2023 report)
+2020,ODIE,Turnover,23.16,Horse racing; COVID-19 impact; source: 2021 report chart
+2020,ODIE,GGR,5.79,Horse racing; source: 2021 report chart
+2020,Online,Turnover,12138.40,Remote gambling surge due to COVID; source: 2021 report table
+2020,Online,GGR,585.79,source: 2021 report table
+2020,Total,Turnover,16609.54,source: 2021 report summary table
+2020,Total,GGR,1621.48,source: 2021 report summary table
+2021,OPAP,Turnover,3899.83,Land-based; source: 2022 report table (confirmed 2021 report)
+2021,OPAP,GGR,937.42,Land-based; source: 2022 report table (confirmed 2021 report)
+2021,Casinos,Turnover,869.76,COVID restrictions still active in 2021; source: 2021 report summary table
+2021,Casinos,GGR,107.56,source: 2021 report summary table (107.556M exact)
+2021,State_Lotteries,Turnover,256.75,source: 2022 report table (confirmed 2023 report)
+2021,State_Lotteries,GGR,86.62,source: 2022 report table (confirmed 2023 report)
+2021,ODIE,Turnover,25.07,Horse racing; source: 2021 report chart
+2021,ODIE,GGR,6.23,Horse racing; source: 2021 report chart
+2021,Online,Turnover,17444.61,source: 2021 report table (full year under new licensing regime from Aug 2021)
+2021,Online,GGR,719.33,source: 2021 report table
+2021,Total,Turnover,22496.02,source: 2021 report summary table
+2021,Total,GGR,1857.16,source: 2021 report summary table
+2022,OPAP,Turnover,5995.97,Land-based; source: 2022 report summary table (confirmed 2023 report)
+2022,OPAP,GGR,1294.92,Land-based; source: 2022 report summary table (confirmed 2023 report)
+2022,Casinos,Turnover,1549.68,source: 2022 report summary table
+2022,Casinos,GGR,190.76,source: 2022 report summary table (190.757M exact)
+2022,State_Lotteries,Turnover,326.41,source: 2022 report table (confirmed 2023 report)
+2022,State_Lotteries,GGR,111.71,source: 2022 report table (confirmed 2023 report)
+2022,ODIE,Turnover,34.05,Horse racing; source: 2022 report chart
+2022,ODIE,GGR,8.60,Horse racing; source: 2022 report chart
+2022,Online,Turnover,21325.36,source: 2022 report summary table
+2022,Online,GGR,738.78,source: 2022 report summary table
+2022,Total,Turnover,29231.46,source: 2022 report summary table
+2022,Total,GGR,2344.76,source: 2022 report summary table
+2023,OPAP,Turnover,6719.07,Land-based; source: 2023 report summary table
+2023,OPAP,GGR,1364.89,Land-based; source: 2023 report summary table
+2023,Casinos,Turnover,1952.79,source: 2023 report summary table
+2023,Casinos,GGR,230.86,source: 2023 report summary table (Tables 94M + Slots 137M = 231M; chart approx)
+2023,State_Lotteries,Turnover,340.38,source: 2023 report table
+2023,State_Lotteries,GGR,120.20,source: 2023 report table
+2023,ODIE,Turnover,35.99,Horse racing; source: 2023 report chart
+2023,ODIE,GGR,9.00,Horse racing; source: 2023 report chart
+2023,Online,Turnover,27012.13,source: 2023 report summary table
+2023,Online,GGR,867.52,source: 2023 report summary table
+2023,Total,Turnover,36060.36,source: 2023 report summary table
+2023,Total,GGR,2592.47,source: 2023 report summary table
+2024,OPAP,Turnover,,2024 report only provides GGR data (no TGR reported)
+2024,OPAP,GGR,1435.81,Land-based (Επίγεια Παίγνια ΟΠΑΠ); source: 2024 report summary table
+2024,Casinos,Turnover,,2024 report only provides GGR data
+2024,Casinos,GGR,252.81,source: 2024 report summary table (Slots 149M + Tables 103M = 252M; chart)
+2024,State_Lotteries,Turnover,,2024 report only provides GGR data
+2024,State_Lotteries,GGR,116.76,source: 2024 report summary table
+2024,ODIE,Turnover,,2024 report only provides GGR data; horse racing org suspended from 30 Jan 2024
+2024,ODIE,GGR,6.80,Horse racing; Ιπποδρομίες A.E. suspended operations 30 Jan 2024; source: 2024 report summary table (6.801M)
+2024,Online,Turnover,,2024 report only provides GGR data
+2024,Online,GGR,1066.66,source: 2024 report summary table
+2024,Total,Turnover,,2024 report only provides GGR data
+2024,Total,GGR,2878.85,source: 2024 report summary table
