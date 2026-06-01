@@ -71,3 +71,10 @@ Absolute Percentage Error (MAPE) to evaluate the model.
 A simple Claude skill that generates Gantt charts from a JSON config using Python. Supports task dependencies, duration uncertainty (min/max ranges rendered as solid + hatched bars), parallel workstreams, and vertical markers for kick-off and delivery dates.
 
 ![Roadmap Example](./gantt/roadmap_example.png)
+
+### [Greek gambling](./greek-gambling)
+Analysis of the Greek gambling market using annual reports published by the
+Hellenic Gaming Commission (ΕΕΕΠ), covering 2012–2024.
+<br />
+<br />
+![Trend per gambling category](./greek-gambling/gambling-category-trend.png)
