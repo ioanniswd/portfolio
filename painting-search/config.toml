@@ -1,0 +1,33 @@
+# ── Extraction ────────────────────────────────────────────────────────────────
+
+# Number of pixels randomly sampled from each image before clustering.
+# Sampling from the full image avoids resize interpolation artifacts and keeps
+# runtime predictable regardless of image dimensions.
+# Run --benchmark to find the right value for your machine.
+sample_size = 100000
+
+# Number of K-Means clusters per image, i.e. dominant colors extracted.
+# Higher values produce richer per-painting data but increase processing time.
+n_colors = 8
+
+# Image file extensions to scan in --images-dir.
+image_extensions = ["*.jpg", "*.jpeg", "*.png"]
+
+# ── Neo4j write ───────────────────────────────────────────────────────────────
+
+# Number of Painting nodes written to Neo4j per UNWIND batch.
+neo4j_batch_size = 100
+
+# Number of Color nodes written to Neo4j per UNWIND batch during graph setup.
+color_batch_size = 200
+
+# ── Benchmark ─────────────────────────────────────────────────────────────────
+
+[benchmark]
+# How many images to use when benchmarking. A small number (2–5) is enough
+# to get stable timing averages across different image sizes.
+n_images = 5
+
+# Sample sizes tested during the benchmark, in ascending order.
+# Use 0 as the final entry to test the full pixel count (no sampling limit).
+sample_sizes = [10000, 25000, 50000, 100000, 200000, 0]
