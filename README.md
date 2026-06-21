@@ -78,3 +78,14 @@ Hellenic Gaming Commission (ΕΕΕΠ), covering 2012–2024.
 <br />
 <br />
 ![Trend per gambling category](./greek-gambling/gambling-category-trend.png)
+
+### [Painting Search](./painting-search)
+Search a collection of ~4,100 paintings by color using natural language. Dominant colors are extracted from each image with K-Means clustering on randomly sampled pixels, stored in Neo4j as a color knowledge graph, and queried via CIE LAB vector similarity — so asking for "luxury green" or "the color of sand" finds perceptually matching paintings across the full collection.
+
+**"Find paintings with the color of luxury green"**
+
+<img src="./painting-search/assets/examples/lg_picasso_146.jpg" width="150"> <img src="./painting-search/assets/examples/lg_vangogh_448.jpg" width="150"> <img src="./painting-search/assets/examples/lg_vangogh_417.jpg" width="150"> <img src="./painting-search/assets/examples/lg_vangogh_451.jpg" width="150"> <img src="./painting-search/assets/examples/lg_vangogh_512.jpg" width="150">
+
+**"Find paintings with the color of sand"**
+
+<img src="./painting-search/assets/examples/sand_picasso_15.jpg" width="150"> <img src="./painting-search/assets/examples/sand_vangogh_530.jpg" width="150"> <img src="./painting-search/assets/examples/sand_picasso_407.jpg" width="150"> <img src="./painting-search/assets/examples/sand_gauguin_83.jpg" width="150"> <img src="./painting-search/assets/examples/sand_kandinskiy_61.jpg" width="150">
