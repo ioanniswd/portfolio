@@ -23,7 +23,10 @@ pip install marimo
 marimo edit analysis.py
 ```
 
-The analysis is also available as a [PDF report](./analysis.pdf).
+The analysis is also available as a [PDF report](./analysis.pdf) and can be updated with:
+```bash
+marimo export pdf analysis.py -o analysis.pdf
+```
 
 ## Data
 
