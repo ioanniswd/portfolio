@@ -110,14 +110,11 @@ def _(df, mticker, plt):
 
         if cat == "Online":
             pre  = series[series.index < TRUST_YEAR]
-            post = series[series.index >= TRUST_YEAR]
+            # Solid picks up from last pre point for continuity; dashed bridging segment removed
+            post = series[series.index >= pre.index[-1]] if not pre.empty else series[series.index >= TRUST_YEAR]
             if not pre.empty:
                 ax.plot(pre.index, pre.values, color=color, alpha=0.25,
                         linewidth=1.8, linestyle="--", zorder=2)
-            if not pre.empty and not post.empty:
-                ax.plot([pre.index[-1], post.index[0]],
-                        [pre.values[-1], post.values[0]],
-                        color=color, alpha=0.25, linewidth=1.8, linestyle="--", zorder=2)
             if not post.empty:
                 ax.plot(post.index, post.values, color=color, alpha=1.0,
                         linewidth=2.5, zorder=3, **plot_kw)
@@ -133,12 +130,12 @@ def _(df, mticker, plt):
         ax.text(year + 0.35, val, LABEL_MAP[cat],
                 color=CAT_COLORS[cat], va="center", ha="left", fontsize=12)
 
-    ax.axvline(TRUST_YEAR - 0.5, color=TEXT, alpha=0.3, linewidth=1, linestyle=":")
+    ax.axvline(TRUST_YEAR - 1.0, color=TEXT, alpha=0.3, linewidth=1, linestyle=":")
 
     _trans = _transforms.blended_transform_factory(ax.transData, ax.transAxes)
-    ax.text(TRUST_YEAR - 0.65, 0.97, "← estimated", transform=_trans,
+    ax.text(TRUST_YEAR - 1.15, 0.97, "← estimated", transform=_trans,
             color=TEXT, alpha=0.4, fontsize=8, ha="right", va="top")
-    ax.text(TRUST_YEAR - 0.35, 0.97, "audited →", transform=_trans,
+    ax.text(TRUST_YEAR - 0.85, 0.97, "audited →", transform=_trans,
             color=TEXT, alpha=0.85, fontsize=8, ha="left", va="top")
 
     ax.set_xlabel("Year", color=TEXT, fontsize=10)
@@ -165,6 +162,7 @@ def _(df, mticker, plt):
     ax.legend(frameon=False, labelcolor=TEXT, fontsize=9, loc="upper left")
     fig.tight_layout(rect=[0, 0, 1, 0.84])
     fig
+
     return
 
 
@@ -216,14 +214,11 @@ def _(df, mticker, plt):
 
             if _cat == "Online":
                 _pre  = _s[_s.index < _TRUST]
-                _post = _s[_s.index >= _TRUST]
+                # Solid picks up from last pre point for continuity; dashed bridging segment removed
+                _post = _s[_s.index >= _pre.index[-1]] if not _pre.empty else _s[_s.index >= _TRUST]
                 if not _pre.empty:
                     _ax.plot(_pre.index, _pre.values, color=_color, alpha=0.25,
                              linewidth=1.8, linestyle="--", zorder=2)
-                if not _pre.empty and not _post.empty:
-                    _ax.plot([_pre.index[-1], _post.index[0]],
-                             [_pre.values[-1], _post.values[0]],
-                             color=_color, alpha=0.25, linewidth=1.8, linestyle="--", zorder=2)
                 if not _post.empty:
                     _ax.plot(_post.index, _post.values, color=_color, alpha=1.0,
                              linewidth=2.5, zorder=3, **_kw)
@@ -238,11 +233,11 @@ def _(df, mticker, plt):
             _ax.text(_yr + 0.35, _v, _LABELS[_cat],
                      color=_COLORS[_cat], va="center", ha="left", fontsize=12)
 
-        _ax.axvline(_TRUST - 0.5, color=_TEXT, alpha=0.3, linewidth=1, linestyle=":")
+        _ax.axvline(_TRUST - 1.0, color=_TEXT, alpha=0.3, linewidth=1, linestyle=":")
         _t = _tr.blended_transform_factory(_ax.transData, _ax.transAxes)
-        _ax.text(_TRUST - 0.65, 0.97, "← estimated", transform=_t,
+        _ax.text(_TRUST - 1.15, 0.97, "← estimated", transform=_t,
                  color=_TEXT, alpha=0.4, fontsize=8, ha="right", va="top")
-        _ax.text(_TRUST - 0.35, 0.97, "audited →", transform=_t,
+        _ax.text(_TRUST - 0.85, 0.97, "audited →", transform=_t,
                  color=_TEXT, alpha=0.85, fontsize=8, ha="left", va="top")
 
         _ax.set_xlabel("Year", color=_TEXT, fontsize=10)
@@ -271,6 +266,7 @@ def _(df, mticker, plt):
         return _fig
 
     _ggr_chart()
+
     return
 
 
@@ -347,14 +343,11 @@ def _(df, mticker, plt):
 
             if _cat == "Online":
                 _pre  = _s[_s.index < _TRUST]
-                _post = _s[_s.index >= _TRUST]
+                # Solid picks up from last pre point for continuity; dashed bridging segment removed
+                _post = _s[_s.index >= _pre.index[-1]] if not _pre.empty else _s[_s.index >= _TRUST]
                 if not _pre.empty:
                     _ax.plot(_pre.index, _pre.values, color=_color, alpha=0.25,
                              linewidth=1.8, linestyle="--", zorder=2)
-                if not _pre.empty and not _post.empty:
-                    _ax.plot([_pre.index[-1], _post.index[0]],
-                             [_pre.values[-1], _post.values[0]],
-                             color=_color, alpha=0.25, linewidth=1.8, linestyle="--", zorder=2)
                 if not _post.empty:
                     _ax.plot(_post.index, _post.values, color=_color, alpha=1.0,
                              linewidth=2.5, zorder=3, **_kw)
@@ -368,11 +361,11 @@ def _(df, mticker, plt):
             _ax.text(_yr + 0.35, _v, f"{_LABELS[_cat]} ({_v:.1f}% in {_yr})",
                      color=_COLORS[_cat], va="center", ha="left", fontsize=12, clip_on=False)
 
-        _ax.axvline(_TRUST - 0.5, color=_TEXT, alpha=0.3, linewidth=1, linestyle=":")
+        _ax.axvline(_TRUST - 1.0, color=_TEXT, alpha=0.3, linewidth=1, linestyle=":")
         _t = _tr.blended_transform_factory(_ax.transData, _ax.transAxes)
-        _ax.text(_TRUST - 0.65, 0.97, "← estimated", transform=_t,
+        _ax.text(_TRUST - 1.15, 0.97, "← estimated", transform=_t,
                  color=_TEXT, alpha=0.4, fontsize=8, ha="right", va="top")
-        _ax.text(_TRUST - 0.35, 0.97, "audited →", transform=_t,
+        _ax.text(_TRUST - 0.85, 0.97, "audited →", transform=_t,
                  color=_TEXT, alpha=0.85, fontsize=8, ha="left", va="top")
 
         _ax.set_xlabel("Year", color=_TEXT, fontsize=10)
@@ -403,6 +396,7 @@ def _(df, mticker, plt):
         return _fig
 
     _hold_chart()
+
     return
 
 
