@@ -1,6 +1,15 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "marimo",
+#     "pandas",
+#     "matplotlib",
+# ]
+# ///
+
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.14"
 app = marimo.App(width="medium")
 
 
@@ -29,18 +38,35 @@ def _(mo):
 def _():
     import marimo as mo
     import pandas as pd
-    import seaborn as sns
     import matplotlib.pyplot as plt
     import matplotlib.ticker as mticker
-    import numpy as np
 
     return mo, mticker, pd, plt
 
 
 @app.cell(hide_code=True)
-def _(mo, pd):
-    DATA_PATH = "/home/gpoulis/projects/portfolio/greek-gambling/data/financial_data.csv"
+def _():
+    import os
+    import urllib.request
 
+    _local_data = "/home/gpoulis/projects/portfolio/greek-gambling/data/financial_data.csv"
+    _local_font = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
+    _DATA_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/gambling-in-greece/greek-gambling/data/financial_data.csv"
+    _FONT_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/gambling-in-greece/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
+
+    DATA_PATH = _local_data if os.path.exists(_local_data) else _DATA_URL
+
+    if os.path.exists(_local_font):
+        FONT_PATH = _local_font
+    else:
+        FONT_PATH = "/tmp/NotoSansMono.ttf"
+        if not os.path.exists(FONT_PATH):
+            urllib.request.urlretrieve(_FONT_URL, FONT_PATH)
+    return DATA_PATH, FONT_PATH
+
+
+@app.cell(hide_code=True)
+def _(DATA_PATH, mo, pd):
     df = pd.read_csv(DATA_PATH)
     df["value_eur_millions"] = pd.to_numeric(df["value_eur_millions"], errors="coerce")
 
@@ -63,12 +89,11 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(df, mticker, plt):
+def _(FONT_PATH, df, mticker, plt):
     import matplotlib.transforms as _transforms
     from matplotlib import font_manager as _fm
 
     TRUST_YEAR = 2020
-    FONT_PATH = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
     BG, TEXT, GRID, SPINE = "#0D1B2A", "#fefae0", "#1b2631", "#2d4a6a"
 
     CAT_COLORS = {
@@ -162,18 +187,16 @@ def _(df, mticker, plt):
     ax.legend(frameon=False, labelcolor=TEXT, fontsize=9, loc="upper left")
     fig.tight_layout(rect=[0, 0, 1, 0.84])
     fig
-
     return
 
 
 @app.cell(hide_code=True)
-def _(df, mticker, plt):
+def _(FONT_PATH, df, mticker, plt):
     def _ggr_chart():
         import matplotlib.transforms as _tr
         from matplotlib import font_manager as _fm
 
         _TRUST = 2020
-        _FONT  = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
         _BG, _TEXT, _GRID, _SPINE = "#0D1B2A", "#fefae0", "#1b2631", "#2d4a6a"
 
         _COLORS = {
@@ -191,8 +214,8 @@ def _(df, mticker, plt):
             "ODIE":            "Horse Racing (ODIE)",
         }
 
-        _fm.fontManager.addfont(_FONT)
-        plt.rcParams["font.family"] = _fm.FontProperties(fname=_FONT).get_name()
+        _fm.fontManager.addfont(FONT_PATH)
+        plt.rcParams["font.family"] = _fm.FontProperties(fname=FONT_PATH).get_name()
 
         _ggr = df[(df["metric"] == "GGR") & (df["category"] != "Total")].copy()
         _piv = _ggr.pivot_table(index="year", columns="category", values="value_eur_millions")
@@ -266,7 +289,6 @@ def _(df, mticker, plt):
         return _fig
 
     _ggr_chart()
-
     return
 
 
@@ -291,13 +313,12 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(df, mticker, plt):
+def _(FONT_PATH, df, mticker, plt):
     def _hold_chart():
         import matplotlib.transforms as _tr
         from matplotlib import font_manager as _fm
 
         _TRUST = 2020
-        _FONT  = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
         _BG, _TEXT, _GRID, _SPINE = "#0D1B2A", "#fefae0", "#1b2631", "#2d4a6a"
 
         _COLORS = {
@@ -315,8 +336,8 @@ def _(df, mticker, plt):
             "ODIE":            "Horse Racing (ODIE)",
         }
 
-        _fm.fontManager.addfont(_FONT)
-        plt.rcParams["font.family"] = _fm.FontProperties(fname=_FONT).get_name()
+        _fm.fontManager.addfont(FONT_PATH)
+        plt.rcParams["font.family"] = _fm.FontProperties(fname=FONT_PATH).get_name()
 
         _tgr = df[df["metric"] == "Turnover"].pivot_table(
             index="year", columns="category", values="value_eur_millions")
@@ -396,17 +417,15 @@ def _(df, mticker, plt):
         return _fig
 
     _hold_chart()
-
     return
 
 
 @app.cell(hide_code=True)
-def _(df, mticker, plt):
+def _(FONT_PATH, df, mticker, plt):
     def _waterfall_chart():
         from matplotlib import font_manager as _fm
         from matplotlib.patches import FancyArrowPatch
 
-        _FONT  = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
         _BG, _TEXT, _GRID, _SPINE = "#0D1B2A", "#fefae0", "#1b2631", "#2d4a6a"
 
         _COLORS = {
@@ -425,8 +444,8 @@ def _(df, mticker, plt):
         }
         _TOTAL_COLOR = "#fefae0"
 
-        _fm.fontManager.addfont(_FONT)
-        plt.rcParams["font.family"] = _fm.FontProperties(fname=_FONT).get_name()
+        _fm.fontManager.addfont(FONT_PATH)
+        plt.rcParams["font.family"] = _fm.FontProperties(fname=FONT_PATH).get_name()
 
         _d = (
             df[(df["year"] == 2024) & (df["metric"] == "GGR") & (df["category"] != "Total")]
