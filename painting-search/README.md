@@ -115,9 +115,26 @@ All tunable parameters live in [`config.toml`](config.toml), each with an inline
 | `benchmark.n_images` | `3` | Images used during the benchmark |
 | `benchmark.sample_sizes` | `10k … full` | Sample sizes tested by the benchmark (`0` = full pixel count) |
 
-## Claude Skill
+## Natural-language search
 
-This project includes a [`SKILL.md`](SKILL.md) for use with Claude Code or any agent that supports skill files. Load it and you can search the collection in plain English — the agent translates your request into a Cypher query, runs it against Neo4j, and displays matching paintings with images.
+Two ways to search the collection in plain English:
+
+### 1. Local LLM funnel (shippable)
+
+[`scripts/search.py`](scripts/search.py) is the full production funnel with **no paid API**. A local [Ollama](https://ollama.com) model decomposes your request into a structured `SearchIntent` (colors, moods, lightness, contrast, exclusions); deterministic code resolves color adjacency in CIE LAB space, composes a parameterized Cypher query, and runs it. The LLM never writes Cypher — it only fills a schema — so a small local model is enough and there's no injection surface.
+
+```bash
+ollama pull llama3.1:8b          # one-time; or set OLLAMA_MODEL in .env
+uv run python scripts/search.py "predominantly gold, with no red colours"
+uv run python scripts/search.py "find me paintings that feel warm and earthy" --limit 8
+uv run python scripts/search.py  # interactive REPL
+```
+
+Inspect what it does with `--show-intent` (the parsed constraints) and `--show-cypher` (the generated query). Handles compound requests — positive and negative constraints together — because each constraint compiles to its own composable Cypher block rather than picking a single fixed template.
+
+### 2. Claude Skill (interactive)
+
+This project also includes a [`SKILL.md`](SKILL.md) for use with Claude Code or any agent that supports skill files. Load it and the agent translates your request into a Cypher query, runs it, and displays matching paintings with images inline.
 
 ```
 Find me paintings that feel warm and earthy
