@@ -18,7 +18,7 @@ LOG_DIR      := logs
 export OLLAMA_HOST
 
 .DEFAULT_GOAL := help
-.PHONY: help up down restart status neo4j-up neo4j-down ollama-up ollama-down ollama-pull search
+.PHONY: help up down restart status neo4j-up neo4j-down ollama-up ollama-down ollama-pull search reset-graph ingest repopulate
 
 help: ## Show this help
 	@echo "Painting-search services:"
@@ -86,3 +86,14 @@ ollama-pull: ## Download the LLM model (llama3.1:8b)
 
 search: ## Run a query: make search Q="deep ocean water" [FLAGS="--show-intent --show-cypher"]
 	@uv run python scripts/search.py $(FLAGS) $(Q)
+
+# ── Data (graph population) ───────────────────────────────────────────────────
+
+reset-graph: ## Delete all paintings (keeps colours + index) — run before a clean re-ingest
+	@uv run python scripts/reset_graph.py
+
+ingest: ## Extract colours from images/images/ into Neo4j
+	@uv run python scripts/pipeline.py --images-dir images/images/
+
+repopulate: reset-graph ingest ## Clean-slate re-ingest: reset the graph, then extract
+	@echo "→ repopulate complete"
