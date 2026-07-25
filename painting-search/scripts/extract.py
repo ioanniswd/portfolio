@@ -12,10 +12,15 @@ def to_pixel_array(img: Image.Image) -> np.ndarray:
     return np.array(img).reshape(-1, 3).astype(np.float32)
 
 
-def sample_from_array(pixels: np.ndarray, sample_size: int) -> np.ndarray:
-    """Randomly subsample pixels to at most sample_size rows."""
+def sample_from_array(pixels: np.ndarray, sample_size: int, seed: int = 42) -> np.ndarray:
+    """Randomly subsample pixels to at most sample_size rows.
+
+    Seeded for reproducibility: the same image always yields the same subsample,
+    so a full pipeline run produces an identical graph every time (K-Means is
+    already seeded via random_state=42). Pass a different seed to vary sampling.
+    """
     if len(pixels) > sample_size:
-        idx = np.random.default_rng().choice(len(pixels), sample_size, replace=False)
+        idx = np.random.default_rng(seed).choice(len(pixels), sample_size, replace=False)
         return pixels[idx]
     return pixels
 

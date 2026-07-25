@@ -3,6 +3,16 @@ import colorsys
 import numpy as np
 
 
+# The 10 colour families. Single source of truth: every color is assigned to one
+# of these by _assign_family() below, and search.py imports this list so the LLM
+# prompt and the query builder stay in sync with what's actually in the graph.
+FAMILIES = [
+    "Whites & Creams", "Yellows & Golds", "Oranges & Corals", "Reds & Pinks",
+    "Browns & Earth Tones", "Greens", "Blues", "Purples & Violets",
+    "Grays & Neutrals", "Blacks & Darks",
+]
+
+
 _ART_PIGMENTS = {
     "titanium white":   "#FAFAFA",
     "zinc white":       "#F8F8F0",

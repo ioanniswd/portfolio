@@ -10,6 +10,8 @@ description: Search a Neo4j painting collection by color using natural language.
 
 Translate free-text color requests into Cypher queries against the painting-search Neo4j graph and return matching paintings with color breakdowns.
 
+> **Two ways to search this collection.** This skill is the *interactive* path: an agent (Claude Code or similar) reads these instructions, writes the Cypher itself, runs it, and renders matching images inline. There is also a *fully local, no-API* path — [`scripts/search.py`](scripts/search.py), driven by a local Ollama model — which does the same translation as a standalone program (the model emits a structured intent, and Python builds the Cypher). The two are independent: use this skill for a conversational agent, the funnel for a self-contained local tool. See the [README](README.md).
+
 ---
 
 ## Graph Schema
@@ -22,7 +24,7 @@ Translate free-text color requests into Cypher queries against the painting-sear
 (:ColorFamily {name})
 ```
 
-Vector index `color_lab_index` is defined on `Color.lab_vector` (dimensions: 3, cosine similarity). Use it to find perceptually adjacent colors without pre-computed relationships.
+Vector index `color_lab_index` is defined on `Color.lab_vector` (dimensions: 3, **euclidean** similarity — in CIE LAB space Euclidean distance ≈ perceptual difference). Use it to find perceptually adjacent colors without pre-computed relationships.
 
 ---
 
@@ -68,13 +70,14 @@ Vector index `color_lab_index` is defined on `Color.lab_vector` (dimensions: 3, 
 | "dark and dramatic" | `c.l < 30` LAB lightness threshold |
 | "light / airy" | `c.l > 75` LAB lightness threshold |
 
+**Breadth of a colour word matters.** A *specific shade* ("cerulean", "burgundy") → vector KNN around that colour. A *broad colour category* — a bare colour word like "blue", "green", "reds" — → match the whole **family** (`c.family = "Blues"`), not KNN. A saturated colour's KNN neighbourhood is narrow and drifts into adjacent hues (blue → purples) before it reaches the navy/slate/muted members of the category, so the family gives far better coverage. Reserve exact `{name: ...}` for when the user says "exactly".
+
 ### Color name resolution
 
-If the user names a color not in the vocabulary (e.g., "salmon", "eggshell", "petrol"):
+The vocabulary is ~960 named colours (the xkcd survey + art pigments), so most colour words — including many that *sound* descriptive ("sand", "sage", "teal", "salmon") — are already in it. **Resolve against the vocabulary first:**
 
-1. Estimate its approximate RGB from knowledge (e.g., salmon ≈ `[250, 128, 114]`)
-2. Convert to CIE LAB using the formula below
-3. Use query pattern 4 (free-form LAB vector search) with `$lab_vector`
+1. Match the colour word to a vocabulary name — exact, then fuzzy (fixes typos: "burgandy" → "burgundy"). If it resolves, use that colour: KNN neighbours for a shade, or its family for a broad word.
+2. **Only if there is no close vocabulary match** — a genuinely novel phrase like "deep ocean water" — estimate its approximate RGB from knowledge (e.g., salmon ≈ `[250, 128, 114]`), convert to CIE LAB (formula below), and use query pattern 4 (free-form LAB vector search) with `$lab_vector`.
 
 **RGB → CIE LAB conversion** (D65 illuminant):
 ```
@@ -164,12 +167,14 @@ LIMIT 20
 
 ### Template 5 — Exclusion
 
+"No red" rarely means *zero* red — nearly every painting has a trace. Exclude only a **significant** presence by adding a percentage floor (`> 0.05`) to the `NOT EXISTS`.
+
 ```cypher
 MATCH (p:Painting)-[h:HAS_COLOR]->(c:Color {name: $want})
 WHERE h.rank <= $rank
   AND NOT EXISTS {
-    MATCH (p)-[:HAS_COLOR]->(x:Color)
-    WHERE x.family = $exclude_family
+    MATCH (p)-[hx:HAS_COLOR]->(x:Color)
+    WHERE x.family = $exclude_family AND hx.percentage > 0.05
   }
 RETURN p.name AS painting, round(h.percentage * 100, 1) AS pct
 ORDER BY pct DESC
@@ -218,7 +223,7 @@ Example for "find me 3 paintings with blue":
 > **Marc Chagall 214** — 88.3% blue  
 > [image]
 
-If no results are found, say so and suggest a broader search (family instead of exact name, or higher k for KNN).
+If no results are found, **progressively relax** rather than stopping: widen one notch at a time — loosen the quantity ("predominantly" → "a lot of" → merely present), broaden a specific colour to its whole family, then drop an exclusion — and tell the user exactly what you relaxed ("no predominantly-gold paintings; here are the most gold-heavy ones"). Only report "nothing found" once even the broadest form is empty.
 
 If the user's color maps to multiple close vocabulary terms (e.g., "gold" vs "yellow ochre" vs "naples yellow"), run adjacency search (Template 2) with k=8 rather than exact match to avoid missing paintings.
 

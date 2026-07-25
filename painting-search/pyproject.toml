@@ -11,4 +11,6 @@ dependencies = [
     "tqdm",
     "matplotlib",
     "kaggle>=2.2.2",
+    "ollama",
+    "pydantic",
 ]

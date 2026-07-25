@@ -54,7 +54,17 @@ cp .env.example .env
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=
+OLLAMA_MODEL=llama3.1:8b
+OLLAMA_HOST=http://localhost:11434
 ```
+
+**4. Install [Ollama](https://ollama.com)** (only needed for natural-language search) and pull the model:
+
+```bash
+ollama pull llama3.1:8b
+```
+
+From then on `make up` starts both Neo4j and Ollama, and `make search Q="…"` runs a query — see [Natural-language search](#natural-language-search).
 
 ## Usage
 
@@ -115,9 +125,41 @@ All tunable parameters live in [`config.toml`](config.toml), each with an inline
 | `benchmark.n_images` | `3` | Images used during the benchmark |
 | `benchmark.sample_sizes` | `10k … full` | Sample sizes tested by the benchmark (`0` = full pixel count) |
 
-## Claude Skill
+## Natural-language search
 
-This project includes a [`SKILL.md`](SKILL.md) for use with Claude Code or any agent that supports skill files. Load it and you can search the collection in plain English — the agent translates your request into a Cypher query, runs it against Neo4j, and displays matching paintings with images.
+Two ways to search the collection in plain English:
+
+### 1. Local LLM funnel — fully local, no paid API (recommended)
+
+[`scripts/search.py`](scripts/search.py) is the full production funnel powered by a **local [Ollama](https://ollama.com) model** — no cloud, no API key, no per-query cost. The model decomposes your request into a structured `SearchIntent`; deterministic Python resolves colours in CIE LAB space and composes a parameterized Cypher query. **The LLM never writes Cypher** — it only fills a schema — so a small local model (default `llama3.1:8b`) is enough, and there's no injection surface.
+
+Start the services and search via the [Makefile](Makefile):
+
+```bash
+make up                                    # start Neo4j + Ollama
+make search Q="find paintings with the color of sand"
+make search Q="paintings with both blue and green"
+make search Q="a lot of blue, but no red"
+make search Q="something warm and earthy" FLAGS="--show-intent --show-cypher"
+make search                                # no Q → interactive REPL
+make down                                  # stop everything
+```
+
+(Equivalently: `ollama pull llama3.1:8b`, then `uv run python scripts/search.py "<query>"`.)
+
+What it handles:
+
+- **Colour breadth** — a specific shade (`burgundy`, `deep ocean water`), a shade plus its neighbours, or a whole **family** (`blue`, `reds`) — chosen per request.
+- **Typos & off-vocabulary colours** — `burgandy` → `burgundy`, `sand` → the real tan; matched against the ~960 named colours (fuzzy), with the model's RGB estimate as a fallback.
+- **Multiple + negative constraints together** — "predominantly gold, no red" compiles include *and* exclude blocks into one query.
+- **Moods, lightness, contrast** — "warm and earthy", "dark and dramatic".
+- **Progressive relaxation** — if nothing matches, it widens the search one notch at a time (and reports how) instead of returning nothing.
+
+Inspect the internals with `--show-intent` (the parsed JSON) and `--show-cypher` (the generated query). See the [`Makefile`](Makefile) for all service targets.
+
+### 2. Claude Skill (interactive)
+
+This project also includes a [`SKILL.md`](SKILL.md) for use with Claude Code or any agent that supports skill files. Load it and the agent translates your request into a Cypher query, runs it, and displays matching paintings with images inline.
 
 ```
 Find me paintings that feel warm and earthy
@@ -127,19 +169,37 @@ I want a painting that is predominantly white and gold
 
 ## Examples
 
-**"Find paintings with the color of luxury green"**
+All produced by the local Ollama funnel (`scripts/search.py`) against the graph.
 
-<img src="assets/examples/lg_picasso_146.jpg" width="175"> <img src="assets/examples/lg_vangogh_448.jpg" width="175"> <img src="assets/examples/lg_vangogh_417.jpg" width="175"> <img src="assets/examples/lg_vangogh_451.jpg" width="175"> <img src="assets/examples/lg_vangogh_512.jpg" width="175">
+**"Find paintings with the color of sand"** — a single, off-vocabulary colour
 
-*Picasso 146 · Van Gogh 448 · Van Gogh 417 · Van Gogh 451 · Van Gogh 512*
+<img src="assets/examples/sand_gauguin_31.jpg" width="175"> <img src="assets/examples/sand_gauguin_282.jpg" width="175"> <img src="assets/examples/sand_kandinsky_18.jpg" width="175"> <img src="assets/examples/sand_vangogh_490.jpg" width="175">
+
+*Gauguin 31 · Gauguin 282 · Kandinsky 18 · Van Gogh 490*
 
 ---
 
-**"Find paintings with the color of sand"**
+**"Paintings with both blue and green"** — two colours, both required
 
-<img src="assets/examples/sand_picasso_15.jpg" width="175"> <img src="assets/examples/sand_vangogh_530.jpg" width="175"> <img src="assets/examples/sand_picasso_407.jpg" width="175"> <img src="assets/examples/sand_gauguin_83.jpg" width="175"> <img src="assets/examples/sand_kandinskiy_61.jpg" width="175">
+<img src="assets/examples/bluegreen_vangogh_448.jpg" width="175"> <img src="assets/examples/bluegreen_magritte_84.jpg" width="175"> <img src="assets/examples/bluegreen_cezanne_24.jpg" width="175"> <img src="assets/examples/bluegreen_vangogh_317.jpg" width="175">
 
-*Picasso 15 · Van Gogh 530 · Picasso 407 · Gauguin 83 · Kandinsky 61*
+*Van Gogh 448 · Magritte 84 · Cézanne 24 · Van Gogh 317*
+
+---
+
+**"A lot of blue, but no red"** — one colour included, a whole family excluded
+
+<img src="assets/examples/bluenored_magritte_71.jpg" width="175"> <img src="assets/examples/bluenored_magritte_4.jpg" width="175"> <img src="assets/examples/bluenored_magritte_148.jpg" width="175"> <img src="assets/examples/bluenored_magritte_170.jpg" width="175">
+
+*Magritte 71 · Magritte 4 · Magritte 148 · Magritte 170*
+
+---
+
+**"Something dark and moody"** — a mood, matched by overall lightness
+
+<img src="assets/examples/dark_rembrandt_96.jpg" width="175"> <img src="assets/examples/dark_rembrandt_111.jpg" width="175"> <img src="assets/examples/dark_titian_240.jpg" width="175"> <img src="assets/examples/dark_bruegel_47.jpg" width="175">
+
+*Rembrandt 96 · Rembrandt 111 · Titian 240 · Bruegel 47*
 
 ---
 
