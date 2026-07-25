@@ -86,12 +86,15 @@ Color families (use these EXACT strings for `moods` and `exclude.family`):
 {chr(10).join('  - ' + f for f in FAMILIES)}
 
 Rules:
-- `colors`: one entry per specific color the user names or implies.
-  * If it is a common color or artist pigment (e.g. "blue", "gold", "crimson",
-    "burnt sienna", "viridian"), set `color_name` and leave `approx_rgb` null.
-  * If it is descriptive / off-vocabulary (e.g. "deep ocean water",
-    "luxury green", "sand", "salmon"), leave `color_name` null and estimate
-    `approx_rgb` as [r,g,b] 0-255. Use `match: "adjacent"`.
+- `colors`: one entry per specific color the user names or implies. ALWAYS fill
+  BOTH `color_name` and `approx_rgb`:
+  * `color_name`: your best short name for the colour — a common colour word or
+    artist pigment ("blue", "gold", "crimson", "burnt sienna", "sand", "teal",
+    "sage", "navy", "salmon"). Even for a descriptive phrase, give the closest
+    single colour word (e.g. "deep ocean water" → "ocean blue"; "luxury green"
+    → "emerald"; "colour of sand" → "sand").
+  * `approx_rgb`: your best [r,g,b] 0-255 estimate — used as a fallback if the
+    named colour isn't in the palette. So always provide both.
   * `quantifier` — map quantity words:
       "predominantly X" -> predominantly   (rank<=2 and >30% of the painting)
       "mostly X"        -> mostly           (rank<=2)
@@ -124,7 +127,9 @@ Examples:
   "find me paintings that feel warm and earthy"
     -> {{"moods":[{{"families":["Yellows & Golds","Oranges & Corals","Reds & Pinks","Browns & Earth Tones"]}}]}}
   "something with the color of deep ocean water"
-    -> {{"colors":[{{"color_name":null,"approx_rgb":[16,52,86],"match":"adjacent"}}]}}
+    -> {{"colors":[{{"color_name":"ocean blue","approx_rgb":[16,52,86],"match":"adjacent"}}]}}
+  "find paintings with the color of sand"
+    -> {{"colors":[{{"color_name":"sand","approx_rgb":[194,178,128],"match":"adjacent"}}]}}
   "3 paintings with blue"
     -> {{"colors":[{{"color_name":"blue","match":"family","quantifier":"a_lot"}}],"limit":3}}
   "paintings with lots of green"
