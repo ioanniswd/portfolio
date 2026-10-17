@@ -51,8 +51,8 @@ def _():
 
     _local_data = "/home/gpoulis/projects/portfolio/greek-gambling/data/financial_data.csv"
     _local_font = "/home/gpoulis/projects/portfolio/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
-    _DATA_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/gambling-in-greece/greek-gambling/data/financial_data.csv"
-    _FONT_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/gambling-in-greece/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
+    _DATA_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/master/greek-gambling/data/financial_data.csv"
+    _FONT_URL = "https://raw.githubusercontent.com/ioanniswd/portfolio/master/greek-gambling/fonts/NotoSansMono_SemiCondensed-SemiBold.ttf"
 
     DATA_PATH = _local_data if os.path.exists(_local_data) else _DATA_URL
 
